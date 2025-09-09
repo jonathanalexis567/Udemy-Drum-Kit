@@ -16,16 +16,14 @@ for (let key in sounds) {
   sounds[key].preload = "auto";
 }
 
-// Button clicks + touch
+// Handle clicks/taps with pointerdown (works on both phone + desktop)
 for (var i = 0; i < numberOfDrumsButtons; i++) {
   let button = document.querySelectorAll(".drum")[i];
-
-  button.addEventListener("click", handlePress);
-  button.addEventListener("touchstart", handlePress); // 🔑 instant on phones
+  button.addEventListener("pointerdown", handlePress);
 }
 
 // Keyboard press
-document.addEventListener("keydown", function(event){
+document.addEventListener("keydown", function(event) {
   makeSound(event.key);
   buttonAnimation(event.key);
 });
