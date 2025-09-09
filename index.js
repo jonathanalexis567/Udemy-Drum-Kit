@@ -1,71 +1,56 @@
 var numberOfDrumsButtons = document.querySelectorAll(".drum").length;
 
-//Iteration for the drums.
-for (var i = 0; i < numberOfDrumsButtons; i++){
+// Preload all sounds once
+var sounds = {
+  "w": new Audio("sounds/tom-1.mp3"),
+  "a": new Audio("sounds/tom-2.mp3"),
+  "s": new Audio("sounds/tom-3.mp3"),
+  "d": new Audio("sounds/tom-4.mp3"),
+  "j": new Audio("sounds/snare.mp3"),
+  "k": new Audio("sounds/crash.mp3"),
+  "l": new Audio("sounds/kick-bass.mp3")
+};
 
-    //This select all class drum and every time is clicked, it will appear the alert.
-    document.querySelectorAll(".drum")[i].addEventListener("click", function () {
-        
-        var buttonInnerHTML = this.innerHTML;
-        makeSound(buttonInnerHTML);
-        buttonAnimation(buttonInnerHTML);
-    });
-
+// Allow sounds to be reused quickly
+for (let key in sounds) {
+  sounds[key].preload = "auto";
 }
 
-//Detecting Keyboard Press.
+// Button clicks + touch
+for (var i = 0; i < numberOfDrumsButtons; i++) {
+  let button = document.querySelectorAll(".drum")[i];
+
+  button.addEventListener("click", handlePress);
+  button.addEventListener("touchstart", handlePress); // 🔑 instant on phones
+}
+
+// Keyboard press
 document.addEventListener("keydown", function(event){
-    makeSound(event.key);
-    buttonAnimation(event.key);
+  makeSound(event.key);
+  buttonAnimation(event.key);
 });
 
-function makeSound(key){
-
-    switch (key) {
-            case "w":
-                var tom1 = new Audio("sounds/tom-1.mp3");
-                tom1.play();
-                
-            break;
-            case "a":
-                var tom2 = new Audio("sounds/tom-2.mp3");
-                tom2.play();
-            break;
-            case "s":
-                var tom3 = new Audio("sounds/tom-3.mp3");
-                tom3.play();
-            break;
-            case "d":
-                var tom3 = new Audio("sounds/tom-4.mp3");
-                tom3.play();
-            break;
-            case "j":
-                var snare = new Audio("sounds/snare.mp3");
-                snare.play();
-            break;
-            case "k":
-                var crash = new Audio("sounds/crash.mp3");
-                crash.play();
-            break;
-            case "l":
-                var kick_bass = new Audio("sounds/kick-bass.mp3");
-                kick_bass.play();
-            break;
-            
-            
-            default:
-                console.log(buttonInnerHTML);
-                break;
-        }
-
+function handlePress(e) {
+  var buttonInnerHTML = this.innerHTML;
+  makeSound(buttonInnerHTML);
+  buttonAnimation(buttonInnerHTML);
 }
 
-//Animation for the shade.
-function buttonAnimation(currentKey) {
-    var activeButton = document.querySelector("." + currentKey);
+function makeSound(key) {
+  let sound = sounds[key];
+  if (sound) {
+    sound.currentTime = 0; // rewind so it can play repeatedly
+    sound.play();
+  }
+}
 
-    activeButton.classList.add("pressed");
-    setTimeout(function (){
-        activeButton.classList.remove("pressed");
-    }, 100);
+// Animation
+function buttonAnimation(currentKey) {
+  var activeButton = document.querySelector("." + currentKey);
+  if (!activeButton) return;
+
+  activeButton.classList.add("pressed");
+  setTimeout(function () {
+    activeButton.classList.remove("pressed");
+  }, 100);
 }
